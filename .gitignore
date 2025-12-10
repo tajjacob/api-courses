@@ -6,12 +6,25 @@
 *.user
 *.userosscache
 *.sln.docstates
+## .gitignore for .NET Projects
+## Combines rules for build artifacts, user-specific files, and IDE caches.
+## Get latest from https://github.com/github/gitignore/blob/main/Dotnet.gitignore
 
 # Build results
 [Dd]ebug/
 [Rr]elease/
 [Bb]in/
 [Oo]bj/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+bld/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
 
 # Visual Studio 2019 cache/options
 .vs/
@@ -22,6 +35,33 @@
 # Mac
 .DS_Store
 
+# NuGet Packages
+*.nupkg
+*.snupkg
+
+# MSBuild Binary and Structured Log
+*.binlog
+
+# Test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.VisualState.xml
+TestResult.xml
+nunit-*.xml
+CodeCoverage/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# IDE-specific
+.vs/
+.idea/
+.vscode/
+.DS_Store
+
 # Secrets
 secrets.json
 appsettings.Development.json
@@ -29,3 +69,7 @@ appsettings.Development.json
 # Tooling
 /.idea
 /.vscode
+# Other
+~$*
+*~
+ScaffoldingReadMe.txt
