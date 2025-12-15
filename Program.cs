@@ -2,17 +2,23 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// builder.Services.AddOpenApi(); // explanation: use to add OpenAPI/Swagger services
+builder.Services.AddEndpointsApiExplorer(); // explanation: use to explore API endpoints for Swagger
+builder.Services.AddSwaggerGen(); // explanation: use to generate Swagger documentation
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    // app.MapOpenApi(); // explanation: use to serve OpenAPI/Swagger UI in development environment
+    app.UseSwagger(); // explanation: enables middleware to serve generated Swagger as a JSON endpoint
+    app.UseSwaggerUI(); // explanation: enables middleware to serve swagger-ui (HTML, JS, CSS, etc.)
 }
-
+else
+{
 app.UseHttpsRedirection();
+}
 
 var summaries = new[]
 {
@@ -33,9 +39,9 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast");
 
-app.Run();
+app.Run(); // explanation: starts the web application and listens for incoming HTTP requests
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary) // explanation: defines a record type to represent weather forecast data
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
