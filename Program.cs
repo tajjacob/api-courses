@@ -1,4 +1,8 @@
+using System.Text.Json.Serialization;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers(); // explanation: register controller services to the dependency injection container
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -18,30 +22,16 @@ if (app.Environment.IsDevelopment())
 else
 {
 app.UseHttpsRedirection();
+    app.UseHttpsRedirection();
 }
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.MapControllers(); // explanation: map controller routes to the request pipeline
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+// app.MapGet("/weatherforecast", () =>
+// {
+// })
+// .WithName("GetWeatherForecast");
 
 app.Run(); // explanation: starts the web application and listens for incoming HTTP requests
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary) // explanation: defines a record type to represent weather forecast data
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+
