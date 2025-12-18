@@ -39,7 +39,7 @@ if (app.Environment.IsDevelopment())
     app.UseCors("DevCors"); // explanation: apply the "DevCors" CORS policy in the development environment
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseHttpsRedirection();
+    // app.UseHttpsRedirection();
 }
 else
 {
@@ -49,10 +49,10 @@ else
 
 app.MapControllers(); // explanation: map controller routes to the request pipeline
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapGet("/", () => Results.Redirect("/swagger/index.html"));
-}
+// if (app.Environment.IsDevelopment())
+// {
+//     app.MapGet("/", () => Results.Redirect("/swagger/index.html"));
+// }
 
 // app.MapGet("/weatherforecast", () =>
 // {
