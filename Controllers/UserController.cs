@@ -26,11 +26,37 @@ public class UserController : ControllerBase // explanation: inherit from Contro
         return currentDate; // explanation: return the current date and time to the client
     }
 
-    [HttpGet("GetUsers/{testValue}")] 
+    [HttpGet("GetUsers")] 
     // public IActionResult Test()
-    public string[] GetUsers(string testValue)
+    public IEnumerable<User> GetUsers()
     {
-     string[] responseArray = new string[] { "Test1", "Test2", testValue };
-     return responseArray;
-    }
+     string sql = @"
+     SELECT [UserId],
+    [FirstName],
+    [LastName],
+    [Email],
+    [Gender],
+    [Active] 
+    FROM TutorialAppSchema.Users"; // explanation: SQL query to select all users from the Users table
+    IEnumerable<User> users = _dapper.LoadData<User>(sql); // explanation: execute the SQL query and retrieve the results as a list of User objects
+        return users; // explanation: return the list of users to the client
+    }   
+    
+    [HttpGet("GetSingleUser/{userId}")] 
+    // public IActionResult Test()
+    public User GetSingleUser(int userId)
+    {
+          string sql = @"
+     SELECT [UserId],
+    [FirstName],
+    [LastName],
+    [Email],
+    [Gender],
+    [Active] 
+    FROM TutorialAppSchema.Users
+    WHERE UserId = " + userId; // explanation: SQL query to select single user from the Users table based on userId
+    User user = _dapper.LoadDataSingle<User>(sql); // explanation: execute the SQL query and retrieve the results as a single User object
+        return user; // explanation: return the user to the client
+    }  
+    
 }
