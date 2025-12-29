@@ -47,16 +47,79 @@ public class UserController : ControllerBase // explanation: inherit from Contro
     public User GetSingleUser(int userId)
     {
           string sql = @"
-     SELECT [UserId],
+                SELECT [UserId],
+                [FirstName],
+                [LastName],
+                [Email],
+                [Gender],
+                [Active] 
+                FROM TutorialAppSchema.Users
+                WHERE UserId = " + userId; // explanation: SQL query to select single user from the Users table based on userId
+    User user = _dapper.LoadDataSingle<User>(sql); // explanation: execute the SQL query and retrieve the results as a single User object
+        return user; // explanation: return the user to the client
+    }  
+
+    [HttpPut("EditUser")]
+    public IActionResult EditUser(User user)
+    {
+        string sql = $@"
+        UPDATE TutorialAppSchema.Users
+        SET [FirstName] = '{user.FirstName}',
+            [LastName] = '{user.LastName}',
+            [Email] = '{user.Email}',
+            [Gender] = '{user.Gender}',
+            [Active] = '{user.Active}'
+        WHERE UserId = {user.UserId}";
+
+        Console.WriteLine(sql);
+        if (_dapper.ExecuteSql(sql))
+        {
+            return Ok("User updated successfully.");
+        }
+        throw new Exception("Failed to update user.");
+    }
+
+        [HttpPost("AddUser")]
+    public IActionResult AddUser(User user)
+    {
+        string sql = $@"
+INSERT INTO TutorialAppSchema.Users(
     [FirstName],
     [LastName],
     [Email],
     [Gender],
-    [Active] 
-    FROM TutorialAppSchema.Users
-    WHERE UserId = " + userId; // explanation: SQL query to select single user from the Users table based on userId
-    User user = _dapper.LoadDataSingle<User>(sql); // explanation: execute the SQL query and retrieve the results as a single User object
-        return user; // explanation: return the user to the client
-    }  
+    [Active]
+) VALUES(
+    '{user.FirstName}',
+    '{user.LastName}',
+    '{user.Email}',
+    '{user.Gender}',
+    '{user.Active}'
+    )";
+        Console.WriteLine(sql);
+         if (_dapper.ExecuteSql(sql))
+        {
+            return Ok("User added successfully.");
+        }
+        throw new Exception("Failed to add user.");
+
+    }
+
+
+    [HttpDelete("DeleteUser/{userId}")]
+    public IActionResult DeleteUser(int userId)
+    {
+        string sql = $@"
+        DELETE FROM TutorialAppSchema.Users
+        WHERE UserId = {userId}";
+
+        Console.WriteLine(sql);
+        if (_dapper.ExecuteSql(sql))
+        {
+            return Ok("User deleted successfully.");
+        }
+        throw new Exception("Failed to delete user.");
+    }
+    
     
 }

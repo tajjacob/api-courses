@@ -1,5 +1,12 @@
 // command to run the application with HTTPS profile
 // dotnet run --launch-profile https
+/// dotnet --info
+/// dotnet clean
+/// dotnet build -v:m
+/// dotnet run
+/// to kill process on port 5050
+/// lsof -i :5050
+/// kill -9 <PID>
 
 using System.Text.Json.Serialization;
 
