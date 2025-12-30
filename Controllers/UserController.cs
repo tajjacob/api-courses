@@ -80,7 +80,7 @@ public class UserController : ControllerBase // explanation: inherit from Contro
     }
 
         [HttpPost("AddUser")]
-    public IActionResult AddUser(User user)
+    public IActionResult AddUser(UserToAddDto user)
     {
         string sql = $@"
 INSERT INTO TutorialAppSchema.Users(
