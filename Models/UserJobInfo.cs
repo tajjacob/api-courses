@@ -1,4 +1,4 @@
-namespace DotnetAPI
+namespace DotnetAPI.Models
 {
     public partial class UserJobInfo // partial explanation: allows the class definition to be split across multiple files
     {

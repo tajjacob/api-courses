@@ -1,4 +1,4 @@
-namespace DotnetAPI
+namespace DotnetAPI.Dtos
 {
     public partial class UserToAddDto // DTO explanation: Data Transfer Object for User data
     {

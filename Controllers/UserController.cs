@@ -1,3 +1,6 @@
+using DotnetAPI.Data;
+using DotnetAPI.Dtos;
+using DotnetAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.Common;
 using System.Text.Json.Serialization;
