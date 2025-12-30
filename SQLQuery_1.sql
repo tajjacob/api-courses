@@ -44,3 +44,9 @@ SELECT [UserId],
     [Salary],
     [AvgSalary] 
 FROM TutorialAppSchema.UserSalary
+
+-- explanation: Deleting the user with UserId = 1 from the Users table
+DELETE FROM TutorialAppSchema.Users
+WHERE UserId = 1
+
+
