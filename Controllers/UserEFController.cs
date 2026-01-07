@@ -1,3 +1,4 @@
+using AutoMapper;
 using DotnetAPI.Data;
 using DotnetAPI.Dtos;
 using DotnetAPI.Models;
@@ -13,10 +14,16 @@ namespace DotnetAPI.Controllers;
 public class UserEFController : ControllerBase // explanation: inherit from ControllerBase to gain access to common API controller functionalities
 {
     DataContextEF _entityFramework;   
+    IMapper _mapper;
 
      public UserEFController(IConfiguration config )
     {
         _entityFramework = new DataContextEF(config);
+
+        _mapper = new MapperConfiguration(cfg =>
+        {
+            cfg.CreateMap<UserToAddDto, User>();
+        }).CreateMapper();
     }
 
 
@@ -73,13 +80,14 @@ public class UserEFController : ControllerBase // explanation: inherit from Cont
     [HttpPost("AddUser")]
     public IActionResult AddUser(UserToAddDto user)
     {
-        User userDB = new User();
+        // User userDB = new User();
+        User userDB = _mapper.Map<User>(user);
         
-        userDB.Active =  user.Active;
-        userDB.FirstName =  user.FirstName;
-        userDB.LastName =  user.LastName;
-        userDB.Email =  user.Email;
-        userDB.Gender = user.Gender;
+        // userDB.Active =  user.Active;
+        // userDB.FirstName =  user.FirstName;
+        // userDB.LastName =  user.LastName;
+        // userDB.Email =  user.Email;
+        // userDB.Gender = user.Gender;
 
         _entityFramework.Users.Add(userDB);
         if (_entityFramework.SaveChanges() > 0)
