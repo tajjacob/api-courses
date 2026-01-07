@@ -1,8 +1,14 @@
 USE DotNetCourseDatabase
 GO 
 
-´
-    WHERE FirstName = 'Umar'
+SELECT [UserId],
+    [FirstName],
+    [LastName],
+    [Email],
+    [Gender],
+    [Active] 
+FROM TutorialAppSchema.Users
+WHERE FirstName = 'Umar'
 
 -- explanation: Inserting a new user into the Users table
 INSERT INTO TutorialAppSchema.Users(
