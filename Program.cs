@@ -38,6 +38,8 @@ builder.Services.AddCors((options) => // explanation: configure CORS policies. C
             });
     });
  
+builder.Services.AddScoped<IUserRepository, UserRepository>(); // explanation: register the UserRepository class as the implementation of the IUserRepository interface with a scoped lifetime
+
 var app = builder.Build();
  
 // Configure the HTTP request pipeline.

@@ -1,6 +1,6 @@
 namespace DotnetAPI.Data
 {
-    public class UserRepository
+    public class UserRepository : IUserRepository
     {
          DataContextEF _entityFramework;   
         public UserEFController(IConfiguration config )
@@ -10,7 +10,7 @@ namespace DotnetAPI.Data
 
         public bool SaveChanges()
         {
-            return (_entityFramework.SaveChanges() >= 0);
+            return (_entityFramework.SaveChanges() > 0);
         }
 
         public void AddEntity<T>(T entityToAdd)

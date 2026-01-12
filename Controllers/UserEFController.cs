@@ -13,12 +13,15 @@ namespace DotnetAPI.Controllers;
 [Route("[controller]")] // explanation: define the route template for the controller
 public class UserEFController : ControllerBase // explanation: inherit from ControllerBase to gain access to common API controller functionalities
 {
-    DataContextEF _entityFramework;   
+    DataContextEF _entityFramework;  
+
+    IUserRepository _userRepository;
     IMapper _mapper;
 
-     public UserEFController(IConfiguration config )
+     public UserEFController(IConfiguration config, IUserRepository userRepository)
     {
         _entityFramework = new DataContextEF(config);
+        _userRepository = userRepository;
 
         _mapper = new MapperConfiguration(cfg =>
         {
@@ -68,7 +71,7 @@ public class UserEFController : ControllerBase // explanation: inherit from Cont
             userDB.LastName =  user.LastName;
             userDB.Email =  user.Email;
             userDB.Gender = user.Gender;
-            if (_entityFramework.SaveChanges() > 0)
+            if (_userRepository.SaveChanges())
             {
                 return Ok("User updated successfully.");
             }
@@ -89,8 +92,8 @@ public class UserEFController : ControllerBase // explanation: inherit from Cont
         // userDB.Email =  user.Email;
         // userDB.Gender = user.Gender;
 
-        _entityFramework.Users.Add(userDB);
-        if (_entityFramework.SaveChanges() > 0)
+        _userRepository.AddEntity<User>(userDB);
+        if (_userRepository.SaveChanges())
         {
             return Ok("User added successfully.");
         }
@@ -111,8 +114,8 @@ public class UserEFController : ControllerBase // explanation: inherit from Cont
      
         if (userDB != null)
         {
-            _entityFramework.Users.Remove(userDB);
-            if (_entityFramework.SaveChanges() > 0)
+            _userRepository.RemoveEntity<User>(userDB);
+            if (_userRepository.SaveChanges())
             {
                 return Ok("User deleted successfully.");
             }
@@ -132,8 +135,8 @@ public class UserEFController : ControllerBase // explanation: inherit from Cont
       [HttpPost("UserSalary")]
     public IActionResult PostUserSalaryEf(UserSalary userForInsert)
     {
-        _entityFramework.UserSalary.Add(userForInsert);
-        if (_entityFramework.SaveChanges() > 0)
+        _userRepository.AddEntity<UserSalary>(userForInsert);
+        if (_userRepository.SaveChanges())
         {
             return Ok();
         }
@@ -150,7 +153,7 @@ public class UserEFController : ControllerBase // explanation: inherit from Cont
         if (userToUpdate != null)
         {
             _mapper.Map(userForUpdate, userToUpdate);
-            if (_entityFramework.SaveChanges() > 0)
+            if (_userRepository.SaveChanges())
             {
                 return Ok();
             }
@@ -168,8 +171,8 @@ public class UserEFController : ControllerBase // explanation: inherit from Cont
 
         if (userToDelete != null)
         {
-            _entityFramework.UserSalary.Remove(userToDelete);
-            if (_entityFramework.SaveChanges() > 0)
+            _userRepository.RemoveEntity<UserSalary>(userToDelete);
+            if (_userRepository.SaveChanges())
             {
                 return Ok();
             }
@@ -189,8 +192,8 @@ public class UserEFController : ControllerBase // explanation: inherit from Cont
     [HttpPost("UserJobInfo")]
     public IActionResult PostUserJobInfoEf(UserJobInfo userForInsert)
     {
-        _entityFramework.UserJobInfo.Add(userForInsert);
-        if (_entityFramework.SaveChanges() > 0)
+        _userRepository.AddEntity<UserJobInfo>(userForInsert);
+        if (_userRepository.SaveChanges())
         {
             return Ok();
         }
@@ -207,7 +210,7 @@ public class UserEFController : ControllerBase // explanation: inherit from Cont
         if (userToUpdate != null)
         {
             _mapper.Map(userForUpdate, userToUpdate);
-            if (_entityFramework.SaveChanges() > 0)
+            if (_userRepository.SaveChanges())
             {
                 return Ok();
             }
@@ -225,8 +228,8 @@ public class UserEFController : ControllerBase // explanation: inherit from Cont
 
         if (userToDelete != null)
         {
-            _entityFramework.UserJobInfo.Remove(userToDelete);
-            if (_entityFramework.SaveChanges() > 0)
+            _userRepository.RemoveEntity<UserJobInfo>(userToDelete);
+            if (_userRepository.SaveChanges())
             {
                 return Ok();
             }
