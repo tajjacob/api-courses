@@ -49,4 +49,10 @@ FROM TutorialAppSchema.UserSalary
 DELETE FROM TutorialAppSchema.Users
 WHERE UserId = 1
 
+CREATE TABLE TutorialAppSchema.Auth(
+    Email NVARCHAR(50)
+    , PasswordHash VARBINARY(MAX)
+    , PasswordSalt VARBINARY(MAX)
+)
+
 
