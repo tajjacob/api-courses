@@ -55,4 +55,10 @@ CREATE TABLE TutorialAppSchema.Auth(
     , PasswordSalt VARBINARY(MAX)
 )
 
+SELECT [Email],
+    [PasswordHash],
+    [PasswordSalt]
+ FROM TutorialAppSchema.Auth WHERE Email = 'taj.jacob@example.com'
+
+    
 
