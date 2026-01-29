@@ -54,3 +54,5 @@ ScaffoldingReadMe.txt
 # Secrets
 secrets.json
 appsettings.Development.json
+
+.fake

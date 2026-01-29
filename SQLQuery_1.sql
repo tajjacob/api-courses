@@ -8,7 +8,7 @@ SELECT [UserId],
     [Gender],
     [Active] 
 FROM TutorialAppSchema.Users
-WHERE FirstName = 'Umar'
+WHERE FirstName = 'test3'
 
 -- explanation: Inserting a new user into the Users table
 INSERT INTO TutorialAppSchema.Users(
