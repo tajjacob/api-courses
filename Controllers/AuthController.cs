@@ -9,10 +9,15 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DotnetAPI.Controllers
 
 {
+      
+    [Authorize]  
+    [ApiController] // explanation: tag the class as an API controller to enable API-specific behaviors and features 
+    [Route("[controller]")] // explanation: define the route template for the controller
   public class AuthController : ControllerBase
   {
     private readonly DataContextDapper _dapper;
@@ -24,6 +29,7 @@ namespace DotnetAPI.Controllers
       _config = config;
     }
 
+    [AllowAnonymous]
     [HttpPost("Register")]
     public IActionResult Register(UserForRegistrationDto userForRegistration)
     { 
@@ -98,6 +104,7 @@ namespace DotnetAPI.Controllers
       
     }
     
+    [AllowAnonymous]
     [HttpPost("Login")]
     public IActionResult Login(UserForLoginDto userForLogin)
     {
@@ -141,6 +148,27 @@ namespace DotnetAPI.Controllers
       
     }
 
+    [HttpGet("RefreshToken")]
+    public IActionResult RefreshToken()
+    {
+      string userId = User.FindFirst("userId")?.Value ?? "";
+
+      string sqlForUserId = @"SELECT UserId FROM TutorialAppSchema.Users WHERE UserId = " 
+                        + userId;
+
+      int userIdFromDB = _dapper.LoadDataSingle<int>(
+        sqlForUserId
+      );
+
+
+      return Ok(
+        new Dictionary<string, string>
+        {
+          { "token", CreateToken(userIdFromDB) }
+        }
+        );
+    }
+
     private byte[] GetPasswordHash(string password, byte[] passwordSalt)
     {
       string passwordSaltPlusString = _config.GetSection("AppSettings:PasswordKey").Value 
@@ -163,9 +191,14 @@ namespace DotnetAPI.Controllers
         new Claim("userId", userId.ToString())
       };
 
+      string? tokenKeyString = _config.GetSection("AppSettings:TokenKey").Value;
+
       SymmetricSecurityKey tokenKey = new SymmetricSecurityKey(
-        Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:TokenKey").Value)
+        Encoding.UTF8.GetBytes(
+          tokenKeyString != null ? tokenKeyString :""
+          )
       );
+
       SigningCredentials credentials = new SigningCredentials(
         tokenKey, SecurityAlgorithms.HmacSha512Signature
       );

@@ -8,8 +8,11 @@
 // lsof -i :5050
 // kill -9 <PID>
 
+using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
 using DotnetAPI.Data;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +44,30 @@ builder.Services.AddCors((options) => // explanation: configure CORS policies. C
  
 builder.Services.AddScoped<IUserRepository, UserRepository>(); // explanation: register the UserRepository class as the implementation of the IUserRepository interface with a scoped lifetime
 
+    string? tokenKeyString = builder.Configuration.GetSection("AppSettings:TokenKey").Value; // explanation: retrieve the token key string from the application configuration settings
+
+      SymmetricSecurityKey tokenKey = new SymmetricSecurityKey(
+        Encoding.UTF8.GetBytes(
+          tokenKeyString ?? ""
+          )
+      );
+
+TokenValidationParameters tokenValidationParameters = new TokenValidationParameters // explanation: configure token validation parameters for JWT authentication
+{
+    ValidateIssuerSigningKey = false,
+    IssuerSigningKey = tokenKey,
+    ValidateIssuer = false,
+    ValidateAudience = false,
+    // ValidateLifetime = true,
+    // ClockSkew = TimeSpan.Zero
+};
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) // explanation: add authentication services using JWT Bearer scheme
+    .AddJwtBearer(options => // explanation: configure JWT Bearer authentication options
+    {
+        options.TokenValidationParameters = tokenValidationParameters; // explanation: set the token validation parameters defined earlier
+    });
+
 var app = builder.Build();
  
 // Configure the HTTP request pipeline.
@@ -57,6 +84,8 @@ else
     app.UseHttpsRedirection();
 }
 
+app.UseAuthentication(); // explanation: enable authentication middleware to process authentication for incoming requests
+app.UseAuthorization(); // explanation: enable authorization middleware to enforce access control based on user roles and permissions
 app.MapControllers(); // explanation: map controller routes to the request pipeline
 
 // if (app.Environment.IsDevelopment())
