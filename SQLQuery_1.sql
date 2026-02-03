@@ -60,5 +60,27 @@ SELECT [Email],
     [PasswordSalt]
  FROM TutorialAppSchema.Auth WHERE Email = 'taj.jacob@example.com'
 
+ 
+CREATE TABLE TutorialAppSchema.Posts(
+   PostId INT IDENTITY(1,1),
+   UserId INT,
+   PostTitle NVARCHAR(255),
+   PostContent NVARCHAR(MAX),
+   PostCreated DATETIME,
+   PostUpdated DATETIME
+)
+
+CREATE CLUSTERED INDEX cix_Posts_userId_postId ON TutorialAppSchema.Posts(UserId, PostId)
+
+SELECT [PostId],
+    [UserId],
+    [PostTitle],
+    [PostContent],
+    [PostCreated],
+    [PostUpdated]
+FROM TutorialAppSchema.Posts 
+
+
+
     
 
