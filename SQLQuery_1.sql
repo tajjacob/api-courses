@@ -80,6 +80,20 @@ SELECT [PostId],
     [PostUpdated]
 FROM TutorialAppSchema.Posts 
 
+INSERT INTO TutorialAppSchema.Posts(
+    UserId,
+    PostTitle,
+    PostContent,
+    PostCreated,
+    PostUpdated
+) VALUES(
+    1,
+    'My First Post',
+    'This is the content of my first post.',
+    GETDATE(),
+    GETDATE()
+)
+
 
 
     
