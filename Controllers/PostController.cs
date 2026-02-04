@@ -132,6 +132,21 @@ namespace DotnetAPI.Controllers
             throw new Exception("Deleting Post failed on save");
         }
 
+        [HttpGet("PostsBySearch/{searchString}")]
+        public IEnumerable<Post> GetPostsBySearch(string searchString)
+        {
+            string sql = @"SELECT [PostId],
+                        [UserId],
+                        [PostTitle],
+                        [PostContent],
+                        [PostCreated],
+                        [PostUpdated]
+                        FROM TutorialAppSchema.Posts
+                        WHERE PostTitle LIKE '%" + searchString + "%'"
+                        + " OR PostContent LIKE '%" + searchString + "%'";
+            return _dapper.LoadData<Post>(sql);
+        }
+
 
             
 
