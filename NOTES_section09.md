@@ -27,3 +27,12 @@
 - **Performance:** Instead of calculating the average salary for the department inside a subquery for every single user (which can be computationally expensive), you calculate it once for all departments, store it, index it, and then join it.
 - **Readability:** It breaks a complex logic flow into distinct steps: "First, figure out department averages. Second, get user data and attach those averages."
 
+## UPSERT
+
+- An **Upsert** is a database operation that combines **UP**date and in**SERT**. It ensures that a record exists in the database by updating it if it is already there, or inserting a new one if it is not.
+
+### Why use this pattern?
+
+- **Idempotency**: You can run this procedure multiple times with the same data without creating duplicate rows or causing errors.
+- **Simplified Application Logic:** Your API code (C#) doesn't need to query the database first to see if a user exists before deciding whether to call an Add or Edit method. It just calls Upsert.
+
