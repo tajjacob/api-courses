@@ -7,7 +7,7 @@ using DotnetAPI.Dtos;
 
 namespace DotnetAPI.Controllers
 {
-    [Authorize]
+    // [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class PostController : ControllerBase
@@ -21,16 +21,29 @@ namespace DotnetAPI.Controllers
         
         }
 
-        [HttpGet("Posts")]
-        public IEnumerable<Post> GetPosts()
+        [HttpGet("Posts/{postId}/{userId}/{searchParam}")]
+        public IEnumerable<Post> GetPosts(int postId, int userId, string searchParam = "None") 
         {
-            string sql = @"SELECT [PostId],
-                        [UserId],
-                        [PostTitle],
-                        [PostContent],
-                        [PostCreated],
-                        [PostUpdated]
-                        FROM TutorialAppSchema.Posts";
+            string sql = @"EXEC TutorialAppSchema.spPosts_Get";
+            string parameters = "";
+            if (postId != 0)
+            {
+                parameters += ", @PostId = " + postId.ToString();
+            }
+            if (userId != 0)
+            {
+                parameters += ", @UserId = " + userId.ToString();
+            }
+            if (searchParam != "None")
+            {
+                parameters += ", @SearchValue= '" + searchParam + "'";
+            }
+            if (parameters.Length > 0)
+            {
+                            sql += parameters.Substring(1); // remove the first comma from the parameters string and append to the SQL query
+            }
+            Console.WriteLine(sql);
+
             return _dapper.LoadData<Post>(sql);
         }
 
