@@ -84,47 +84,42 @@ namespace DotnetAPI.Controllers
 
         }
 
-        [HttpPost("AddPost")]
-        public IActionResult AddPost(PostToAddDto post)
+        [HttpPost("UpsertPost")]
+        public IActionResult UpsertPost(PostToAddDto postUpsert)
         {
-            string sql = @"
-            INSERT INTO TutorialAppSchema.Posts(
-                UserId,
-                PostTitle,
-                PostContent,
-                PostCreated,
-                PostUpdated
-            ) VALUES(
-                " + this.User.FindFirst("userId")?.Value 
-                + @",
-                '" + post.PostTitle + @"',
-                '" + post.PostContent + @"',
-                GETDATE(),
-                GETDATE()
-            )";
+            string sql = @"EXEC TutorialAppSchema.spPosts_Upsert
+    @UserId = " + this.User.FindFirst("userId")?.Value + 
+    ", @PostTitle = '" + postUpsert.PostTitle + @"',
+    @PostContent = '" + postUpsert.PostContent + "'";
 
+    if (postUpsert.PostId > 0)
+            {
+                sql += ", @PostId = " + postUpsert.PostId.ToString();
+                
+            }
+    
             if (_dapper.ExecuteSql(sql))
             {
-                return Ok(post);
+                return Ok(postUpsert);
             }
             throw new Exception("Adding Post failed on save");
         }
 
-        [HttpPut("EditPost")]
-        public IActionResult EditPost(PostToEditDto post)
-        {
-            string sql = "UPDATE TutorialAppSchema.Posts SET PostTitle='" 
-                + post.PostTitle
-                + "', PostContent='"
-                + post.PostContent
-                + "', PostUpdated=GETDATE() WHERE PostId=" + post.PostId.ToString()
-                + " AND UserId=" + this.User.FindFirst("userId")?.Value;
-            if (_dapper.ExecuteSql(sql))
-            {
-                return Ok(post);
-            }
-            throw new Exception("Updating Post failed on save");
-        }
+        // [HttpPut("EditPost")]
+        // public IActionResult EditPost(PostToEditDto post)
+        // {
+        //     string sql = "UPDATE TutorialAppSchema.Posts SET PostTitle='" 
+        //         + post.PostTitle
+        //         + "', PostContent='"
+        //         + post.PostContent
+        //         + "', PostUpdated=GETDATE() WHERE PostId=" + post.PostId.ToString()
+        //         + " AND UserId=" + this.User.FindFirst("userId")?.Value;
+        //     if (_dapper.ExecuteSql(sql))
+        //     {
+        //         return Ok(post);
+        //     }
+        //     throw new Exception("Updating Post failed on save");
+        // }
 
         [HttpDelete("DeletePost/{postId}")]
         public IActionResult DeletePost(int postId)
