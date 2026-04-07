@@ -53,12 +53,15 @@ public class UserCompleteController : ControllerBase // explanation: inherit fro
     {
         string sql = $@"
         EXEC TutorialAppSchema.spUsers_Upsert
-        @FirstName = '" + user.FirstName + @"',
-        @LastName = '" + user.LastName + @"',
-        @Email = '" + user.Email + @"',
-        @Gender = '" + user.Gender + @"',
-        @Active = '" + user.Active + @"',
-        @UserId = '" + user.UserId + @"'";
+        @FirstName = '{user.FirstName}',
+        @LastName = '{user.LastName}',
+        @Email = '{user.Email}',
+        @Gender = '{user.Gender}',
+        @JobTitle = '{user.JobTitle}',
+        @Department = '{user.Department}',
+        @Salary = {user.Salary},
+        @Active = {(user.Active ? 1 : 0)},
+        @UserId = {user.UserId}";
 
 
 
