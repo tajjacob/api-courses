@@ -145,7 +145,7 @@ INSERT INTO TutorialAppSchema.Users(
                 + ", " + userSalaryForInsert.Salary
                 + ")";
 
-        if (_dapper.ExecuteSqlWithRowCount(sql, null) > 0)
+        if (_dapper.ExecuteSqlWithRowCount(sql, new {}) > 0)
         {
             return Ok(userSalaryForInsert);
         }

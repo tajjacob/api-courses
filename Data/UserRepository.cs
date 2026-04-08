@@ -49,7 +49,7 @@ namespace DotnetAPI.Data
             {
                 return user; // explanation: return the user to the client
             }
-            return null;
+            throw new Exception("User not found");
         }
 
         public UserSalary GetSingleUserSalary(int userId)

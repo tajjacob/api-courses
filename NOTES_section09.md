@@ -36,3 +36,8 @@
 - **Idempotency**: You can run this procedure multiple times with the same data without creating duplicate rows or causing errors.
 - **Simplified Application Logic:** Your API code (C#) doesn't need to query the database first to see if a user exists before deciding whether to call an Add or Edit method. It just calls Upsert.
 
+## What is DynamicParameters?
+- Dynamic parameters is a Dapper class that allows us to pass parameters to our SQL query in a safe way (prevents SQL injection)
+
+## What is sql injection?
+- sql injection is a security vulnerability that allows an attacker to execute arbitrary SQL code on the database by manipulating the input parameters. By using parameterized queries (like DynamicParameters in Dapper), we can ensure that user input is treated as data and not executable code, thus preventing SQL injection attacks.
