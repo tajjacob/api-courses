@@ -85,26 +85,11 @@ namespace DotnetAPI.Helpers
           @PasswordSalt = @PasswordSaltParam";
           // left is sp parameter, right is C# parameter
 
-          List<SqlParameter> sqlParameters = new List<SqlParameter>();
+          DynamicParameters sqlParameters = new DynamicParameters();
+          sqlParameters.Add("@EmailParam", userForLogin.Email, DbType.String);
+          sqlParameters.Add("@PasswordHashParam", passwordHash, DbType.Binary);
+          sqlParameters.Add("@PasswordSaltParam", passwordSalt, DbType.Binary);
 
-          SqlParameter emailParameter = new SqlParameter(
-            "@EmailParam", SqlDbType.NVarChar);
-          emailParameter.Value = userForLogin.Email;  
-          sqlParameters.Add(emailParameter);
-          
-
-          SqlParameter passwordHashParameter = new SqlParameter(
-            "@PasswordHashParam", SqlDbType.VarBinary);
-          passwordHashParameter.Value = passwordHash;  
-          sqlParameters.Add(passwordHashParameter);
-          
-          
-          SqlParameter passwordSaltParameter = new SqlParameter(
-            "@PasswordSaltParam", SqlDbType.VarBinary);
-          passwordSaltParameter.Value = passwordSalt;  
-          sqlParameters.Add(passwordSaltParameter);
-        
-          
           return _dapper.ExecuteSqlWithParameters(sqlAddAuth, sqlParameters);
     
     
