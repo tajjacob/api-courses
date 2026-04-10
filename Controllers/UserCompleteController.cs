@@ -3,7 +3,9 @@ using DotnetAPI.Dtos;
 using DotnetAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.Common;
+using System.Data;
 using System.Text.Json.Serialization;
+using Dapper;
 
 
 namespace DotnetAPI.Controllers;
@@ -35,15 +37,26 @@ public class UserCompleteController : ControllerBase // explanation: inherit fro
     {
      string sql = @"
      EXEC TutorialAppSchema.spUsers_Get";
+
+    string stringParameters = "";
+    DynamicParameters sqlParameters = new DynamicParameters();    
+
     if (userId != 0)
         {
-            sql += " @UserId = " + userId; // explanation: SQL query to execute the stored procedure that retrieves complete user information, optionally filtering by userId if it's not zero  
-        }
+            stringParameters += ", @UserId=@UserIdParameter"; // explanation: add the userId parameter to the SQL query if it's not 0, using a parameterized query to prevent SQL injection
+            sqlParameters.Add("@UserIdParameter", userId, DbType.Int32); // explanation: add the userId parameter to the DynamicParameters object to be used in the SQL query execution
+        }  
     if (isActive)
         {
-            sql += " @Active = " + isActive; // explanation: SQL query to execute the stored procedure that retrieves complete user information, optionally filtering by isActive if it's not false
+                stringParameters += ", @Active=@ActiveParameter"; // explanation: add the isActive parameter to the SQL query if it's true, using a parameterized query to prevent SQL injection
+                sqlParameters.Add("@ActiveParameter", isActive, DbType.Boolean); // explanation: add the isActive parameter to the DynamicParameters object to be used in the SQL query execution
         }
-    IEnumerable<UserComplete> users = _dapper.LoadData<UserComplete>(sql); // explanation: execute the SQL query and retrieve the results as a list of UserComplete objects
+    if (stringParameters.Length > 0)
+        {
+            sql += stringParameters.Substring(1); // explanation: append the string parameters to the SQL query, removing the leading comma if there are any string parameters
+            
+        }    
+    IEnumerable<UserComplete> users = _dapper.LoadDataWithParameters<UserComplete>(sql, sqlParameters); // explanation: execute the SQL query and retrieve the results as a list of UserComplete objects
         return users; // explanation: return the list of users to the client
     }   
     
@@ -53,21 +66,32 @@ public class UserCompleteController : ControllerBase // explanation: inherit fro
     {
         string sql = $@"
         EXEC TutorialAppSchema.spUsers_Upsert
-        @FirstName = '{user.FirstName}',
-        @LastName = '{user.LastName}',
-        @Email = '{user.Email}',
-        @Gender = '{user.Gender}',
-        @JobTitle = '{user.JobTitle}',
-        @Department = '{user.Department}',
-        @Salary = {user.Salary},
-        @Active = {(user.Active ? 1 : 0)},
-        @UserId = {user.UserId}";
+        @FirstName = @FirstNameParameter,
+        @LastName = @LastNameParameter,
+        @Email = @EmailParameter,
+        @Gender = @GenderParameter,
+        @JobTitle = @JobTitleParameter,
+        @Department = @DepartmentParameter,
+        @Salary = @SalaryParameter,
+        @Active = @ActiveParameter,
+        @UserId = @UserIdParameter";
+
+        DynamicParameters sqlParameters = new DynamicParameters();
+        sqlParameters.Add("@FirstNameParameter", user.FirstName, DbType.String);
+        sqlParameters.Add("@LastNameParameter", user.LastName, DbType.String);
+        sqlParameters.Add("@EmailParameter", user.Email, DbType.String);
+        sqlParameters.Add("@GenderParameter", user.Gender, DbType.String);
+        sqlParameters.Add("@JobTitleParameter", user.JobTitle, DbType.String);
+        sqlParameters.Add("@DepartmentParameter", user.Department, DbType.String);
+        sqlParameters.Add("@SalaryParameter", user.Salary, DbType.Decimal);
+        sqlParameters.Add("@ActiveParameter", user.Active, DbType.Boolean);
+        sqlParameters.Add("@UserIdParameter", user.UserId, DbType.Int32);
 
 
 
 
-        Console.WriteLine(sql);
-        if (_dapper.ExecuteSql(sql))
+
+        if (_dapper.ExecuteSqlWithParameters(sql, sqlParameters))
         {
             return Ok("User updated successfully.");
         }
@@ -80,26 +104,33 @@ public class UserCompleteController : ControllerBase // explanation: inherit fro
     {
         string sql = $@"
         DELETE FROM TutorialAppSchema.Users
-        WHERE UserId = {userId}";
+        WHERE UserId = @UserIdParameter";
+
+        DynamicParameters sqlParameters = new DynamicParameters();
+        sqlParameters.Add("@UserIdParameter", userId, DbType.Int32);
+
 
         Console.WriteLine(sql);
-        if (_dapper.ExecuteSql(sql))
+        if (_dapper.ExecuteSqlWithParameters(sql, sqlParameters))
         {
             return Ok("User deleted successfully.");
         }
         throw new Exception("Failed to delete user.");
     }
     
-    [HttpDelete("UserJobInfo/{userId}")]
+    [HttpDelete("DeleteJobInfo/{userId}")]
     public IActionResult DeleteUserJobInfo(int userId)
     {
         string sql = @"
             DELETE FROM TutorialAppSchema.UserJobInfo 
-                WHERE UserId = " + userId.ToString();
+                WHERE UserId = @UserIdParameter";
+
+        DynamicParameters sqlParameters = new DynamicParameters();
+        sqlParameters.Add("@UserIdParameter", userId, DbType.Int32);
         
         Console.WriteLine(sql);
 
-        if (_dapper.ExecuteSql(sql))
+        if (_dapper.ExecuteSqlWithParameters(sql, sqlParameters))
         {
             return Ok();
         } 
