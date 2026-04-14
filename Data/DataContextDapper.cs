@@ -23,7 +23,7 @@ namespace DotnetAPI.Data
         public T LoadDataSingle<T>(string sql) // explanation: Generic method to load a single record from the database
         {
             using IDbConnection dbConnection = new SqlConnection(_config.GetConnectionString("DefaultConnection")); 
-            return dbConnection.QuerySingle<T>(sql);
+            return dbConnection.QuerySingleOrDefault<T>(sql);
         } 
 
         public bool ExecuteSql(string sql) // explanation: Generic method to execute a SQL command (like INSERT, UPDATE, DELETE)
@@ -84,7 +84,7 @@ namespace DotnetAPI.Data
         public T LoadDataSingleWithParameters<T>(string sql, DynamicParameters parameters) // explanation: Generic method to load a single record from the database
         {
             using IDbConnection dbConnection = new SqlConnection(_config.GetConnectionString("DefaultConnection")); 
-            return dbConnection.QuerySingle<T>(sql, parameters);
+            return dbConnection.QuerySingleOrDefault<T>(sql, parameters);
         }     
             
     }
